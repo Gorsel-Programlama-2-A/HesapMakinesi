@@ -1,147 +1,150 @@
 import tkinter as tk
 import math
 
-class HesapMakinesi:
-    def __init__(self, pencere):
-        self.pencere = pencere
-        pencere.title("Hesap Makinesi")
-        pencere.geometry("300x400") 
+def sayi_gir(num):
+    global girilen_sayi
+    girilen_sayi = num
+    sonuc_gosterimi.delete(0, tk.END)
+    sonuc_gosterimi.insert(tk.END, str(girilen_sayi))
 
-        self.toplam = 0
-        self.girilen_sayi = 0
-        self.gecerli_islem = ""
-        self.sonuc_gosterimi = tk.Entry(pencere)
-        self.sonuc_gosterimi.grid(row=0, column=0, columnspan=4)
+def islem_butonu_olustur(metin, komut):
+    return tk.Button(pencere, text=metin, command=lambda: kullanilan_islem.set(komut))
 
-        b0 = self.buton_olustur(0)
-        b1 = self.buton_olustur(1)
-        b2 = self.buton_olustur(2)
-        b3 = self.buton_olustur(3)
-        b4 = self.buton_olustur(4)
-        b5 = self.buton_olustur(5)
-        b6 = self.buton_olustur(6)
-        b7 = self.buton_olustur(7)
-        b8 = self.buton_olustur(8)
-        b9 = self.buton_olustur(9)
+def topla():
+    global toplam, girilen_sayi, gecerli_islem
+    if gecerli_islem == "":
+        toplam = girilen_sayi
+    else:
+        toplam += girilen_sayi
+    gecerli_islem = "+"
+    sonuc_gosterimi.delete(0, tk.END)
+    sonuc_gosterimi.insert(tk.END, str(toplam))
 
-        toplama_butonu = self.islem_butonu_olustur("+", self.topla)
-        cikarma_butonu = self.islem_butonu_olustur("-", self.cikar)
-        carpma_butonu = self.islem_butonu_olustur("*", self.carp)
-        bolme_butonu = self.islem_butonu_olustur("/", self.bol)
-        karekok_butonu = self.islem_butonu_olustur("√", self.karekok_al)
-        us_alma_butonu = self.islem_butonu_olustur("^", self.us_al)
+def cikar():
+    global toplam, girilen_sayi, gecerli_islem
+    if gecerli_islem == "":
+        toplam = girilen_sayi
+    else:
+        toplam -= girilen_sayi
+    gecerli_islem = "-"
+    sonuc_gosterimi.delete(0, tk.END)
+    sonuc_gosterimi.insert(tk.END, str(toplam))
 
-        esittir_butonu = tk.Button(pencere, text="=", command=self.sonuc_hesapla)
+def carp():
+    global toplam, girilen_sayi, gecerli_islem
+    if gecerli_islem == "":
+        toplam = girilen_sayi
+    else:
+        toplam *= girilen_sayi
+    gecerli_islem = "*"
+    sonuc_gosterimi.delete(0, tk.END)
+    sonuc_gosterimi.insert(tk.END, str(toplam))
 
-        temizleme_butonu = tk.Button(pencere, text="C", command=self.sonuc_temizle)
-
-        butonlar = [
-            [b7, b8, b9, toplama_butonu],
-            [b4, b5, b6, cikarma_butonu],
-            [b1, b2, b3, carpma_butonu],
-            [temizleme_butonu, b0, esittir_butonu, bolme_butonu],
-            [karekok_butonu, us_alma_butonu]
-        ]
-
-        for i in range(5):
-            for j in range(4):
-                if i == 4 and j > 1:
-                    break
-                butonlar[i][j].grid(row=i+1, column=j)
-
-    def buton_olustur(self, deger):
-        return tk.Button(self.pencere, text=deger, command=lambda num=deger: self.sayi_gir(num))
-
-    def islem_butonu_olustur(self, metin, komut):
-        return tk.Button(self.pencere, text=metin, command=komut)
-
-    def sayi_gir(self, num):
-        self.girilen_sayi = (self.girilen_sayi * 10) + num
-        self.sonuc_gosterimi.delete(0, tk.END)
-        self.sonuc_gosterimi.insert(tk.END, str(self.girilen_sayi))
-
-    def topla(self):
-        if self.gecerli_islem == "":
-            self.toplam = self.girilen_sayi
+def bol():
+    global toplam, girilen_sayi, gecerli_islem
+    if gecerli_islem == "":
+        toplam = girilen_sayi
+    else:
+        if girilen_sayi != 0:
+            toplam /= girilen_sayi
         else:
-            self.toplam += self.girilen_sayi
-        self.gecerli_islem = "+"
-        self.sonuc_gosterimi.delete(0, tk.END)
-        self.sonuc_gosterimi.insert(tk.END, str(self.toplam))
+            toplam = "Hata: Sıfıra bölünemez."
+    gecerli_islem = "/"
+    sonuc_gosterimi.delete(0, tk.END)
+    sonuc_gosterimi.insert(tk.END, str(toplam))
 
-    def cikar(self):
-        if self.gecerli_islem == "":
-            self.toplam = self.girilen_sayi
+def karekok_al():
+    global toplam, girilen_sayi, gecerli_islem
+    toplam = math.sqrt(girilen_sayi)
+    gecerli_islem = "√"
+    sonuc_gosterimi.delete(0, tk.END)
+    sonuc_gosterimi.insert(tk.END, str(toplam))
+
+def us_al():
+    global toplam, girilen_sayi, gecerli_islem
+    if gecerli_islem == "":
+        toplam = girilen_sayi
+    else:
+        toplam = toplam ** girilen_sayi
+    gecerli_islem = "^"
+    sonuc_gosterimi.delete(0, tk.END)
+    sonuc_gosterimi.insert(tk.END, str(toplam))
+
+def sonuc_hesapla():
+    global toplam, girilen_sayi, gecerli_islem
+    if gecerli_islem == "+":
+        toplam += girilen_sayi
+    elif gecerli_islem == "-":
+        toplam -= girilen_sayi
+    elif gecerli_islem == "*":
+        toplam *= girilen_sayi
+    elif gecerli_islem == "/":
+        if girilen_sayi != 0:
+            toplam /= girilen_sayi
         else:
-            self.toplam -= self.girilen_sayi
-        self.gecerli_islem = "-"
-        self.sonuc_gosterimi.delete(0, tk.END)
-        self.sonuc_gosterimi.insert(tk.END, str(self.toplam))
+            toplam = "Hata: Sıfıra bölünemez."
+    elif gecerli_islem == "√":
+        toplam = math.sqrt(toplam)
+    elif gecerli_islem == "^":
+        toplam = toplam ** girilen_sayi
 
-    def carp(self):
-        if self.gecerli_islem == "":
-            self.toplam = self.girilen_sayi
-        else:
-            self.toplam *= self.girilen_sayi
-        self.gecerli_islem = "*"
-        self.sonuc_gosterimi.delete(0, tk.END)
-        self.sonuc_gosterimi.insert(tk.END, str(self.toplam))
+    sonuc_gosterimi.delete(0, tk.END)
+    sonuc_gosterimi.insert(tk.END, str(toplam))
+    girilen_sayi = 0
+    gecerli_islem = ""
 
-    def bol(self):
-        if self.gecerli_islem == "":
-            self.toplam = self.girilen_sayi
-        else:
-            if self.girilen_sayi != 0:
-                self.toplam /= self.girilen_sayi
-            else:
-                self.toplam = "Hata: Sıfıra bölünemez."
-        self.gecerli_islem = "/"
-        self.sonuc_gosterimi.delete(0, tk.END)
-        self.sonuc_gosterimi.insert(tk.END, str(self.toplam))
-
-    def karekok_al(self):
-        self.toplam = math.sqrt(self.girilen_sayi)
-        self.gecerli_islem = "√"
-        self.sonuc_gosterimi.delete(0, tk.END)
-        self.sonuc_gosterimi.insert(tk.END, str(self.toplam))
-
-    def us_al(self):
-        if self.gecerli_islem == "":
-            self.toplam = self.girilen_sayi
-        else:
-            self.toplam = self.toplam ** self.girilen_sayi
-        self.gecerli_islem = "^"
-        self.sonuc_gosterimi.delete(0, tk.END)
-        self.sonuc_gosterimi.insert(tk.END, str(self.toplam))
-
-    def sonuc_hesapla(self):
-        if self.gecerli_islem == "+":
-            self.toplam += self.girilen_sayi
-        elif self.gecerli_islem == "-":
-            self.toplam -= self.girilen_sayi
-        elif self.gecerli_islem == "*":
-            self.toplam *= self.girilen_sayi
-        elif self.gecerli_islem == "/":
-            if self.girilen_sayi != 0:
-                self.toplam /= self.girilen_sayi
-            else:
-                self.toplam = "Hata: Sıfıra bölünemez."
-        elif self.gecerli_islem == "√":
-            self.toplam = math.sqrt(self.toplam)
-        elif self.gecerli_islem == "^":
-            self.toplam = self.toplam ** self.girilen_sayi
-
-        self.sonuc_gosterimi.delete(0, tk.END)
-        self.sonuc_gosterimi.insert(tk.END, str(self.toplam))
-        self.girilen_sayi = 0
-        self.gecerli_islem = ""
-
-    def sonuc_temizle(self):
-        self.toplam = 0
-        self.girilen_sayi = 0
-        self.gecerli_islem = ""
-        self.sonuc_gosterimi.delete(0, tk.END)
+def sonuc_temizle():
+    global toplam, girilen_sayi, gecerli_islem
+    toplam = 0
+    girilen_sayi = 0
+    gecerli_islem = ""
+    sonuc_gosterimi.delete(0, tk.END)
 
 pencere = tk.Tk()
-hesapMakinesi = HesapMakinesi(pencere)
+pencere.title("Hesap Makinesi")
+pencere.geometry("300x400")
+
+toplam = 0
+girilen_sayi = 0
+gecerli_islem = ""
+kullanilan_islem = tk.StringVar()
+sonuc_gosterimi = tk.Entry(pencere)
+sonuc_gosterimi.grid(row=0, column=0, columnspan=4)
+
+b0 = tk.Button(pencere, text=0, command=lambda num=0: sayi_gir(num))
+b1 = tk.Button(pencere, text=1, command=lambda num=1: sayi_gir(num))
+b2 = tk.Button(pencere, text=2, command=lambda num=2: sayi_gir(num))
+b3 = tk.Button(pencere, text=3, command=lambda num=3: sayi_gir(num))
+b4 = tk.Button(pencere, text=4, command=lambda num=4: sayi_gir(num))
+b5 = tk.Button(pencere, text=5, command=lambda num=5: sayi_gir(num))
+b6 = tk.Button(pencere, text=6, command=lambda num=6: sayi_gir(num))
+b7 = tk.Button(pencere, text=7, command=lambda num=7: sayi_gir(num))
+b8 = tk.Button(pencere, text=8, command=lambda num=8: sayi_gir(num))
+b9 = tk.Button(pencere, text=9, command=lambda num=9: sayi_gir(num))
+
+toplama_butonu = islem_butonu_olustur("+", topla)
+cikarma_butonu = islem_butonu_olustur("-", cikar)
+carpma_butonu = islem_butonu_olustur("*", carp)
+bolme_butonu = islem_butonu_olustur("/", bol)
+karekok_butonu = islem_butonu_olustur("√", karekok_al)
+us_alma_butonu = islem_butonu_olustur("^", us_al)
+
+esittir_butonu = tk.Button(pencere, text="=", command=sonuc_hesapla)
+temizleme_butonu = tk.Button(pencere, text="C", command=sonuc_temizle)
+
+butonlar = [
+    [b7, b8, b9, toplama_butonu],
+    [b4, b5, b6, cikarma_butonu],
+    [b1, b2, b3, carpma_butonu],
+    [temizleme_butonu, b0, esittir_butonu, bolme_butonu],
+    [karekok_butonu, us_alma_butonu]
+]
+
+for i in range(5):
+    for j in range(4):
+        if i == 4 and j > 1:
+            break
+        butonlar[i][j].grid(row=i+1, column=j)
+
 pencere.mainloop()
+
